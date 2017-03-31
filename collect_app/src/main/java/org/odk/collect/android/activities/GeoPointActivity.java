@@ -17,32 +17,26 @@ package org.odk.collect.android.activities;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.location.LocationServices;
 
 import org.odk.collect.android.R;
-import org.odk.collect.android.utilities.PlayServicesUtil;
 
 public class GeoPointActivity extends GeoActivity {
 
-    private static final String TAG = "GeoPointActivity";
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
         setTitle(getString(R.string.get_location));
 
-        if (PlayServicesUtil.isGooglePlayServicesAvailable(GeoPointActivity.this)) {
-            buildGoogleApiClient();
-            createLocationRequest();
-            buildLocationSettingsRequest();
-            checkLocationSettings();
-        } else {
-            PlayServicesUtil.showGooglePlayServicesAvailabilityErrorDialog(GeoPointActivity.this);
-        }
+        setContentView(R.layout.activity_geopoint);
+        progressBar = (ProgressBar) findViewById(R.id.loading_location);
     }
 
     @Override
@@ -62,6 +56,11 @@ public class GeoPointActivity extends GeoActivity {
         intent.putExtra(FormEntryActivity.LOCATION_RESULT, builder);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    @Override
+    protected void onLocationUpdates() {
+        progressBar.setVisibility(View.VISIBLE);
     }
 
     @Override

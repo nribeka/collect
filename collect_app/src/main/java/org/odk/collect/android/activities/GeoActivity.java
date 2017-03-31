@@ -18,10 +18,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.location.Location;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Window;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -36,6 +38,7 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 
 import org.odk.collect.android.application.Collect;
+import org.odk.collect.android.utilities.PlayServicesUtil;
 
 public abstract class GeoActivity extends FragmentActivity implements
         GoogleApiClient.ConnectionCallbacks,
@@ -89,6 +92,19 @@ public abstract class GeoActivity extends FragmentActivity implements
     protected Location mCurrentLocation;
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (PlayServicesUtil.isGooglePlayServicesAvailable(GeoActivity.this)) {
+            buildGoogleApiClient();
+            createLocationRequest();
+            buildLocationSettingsRequest();
+            checkLocationSettings();
+        } else {
+            PlayServicesUtil.showGooglePlayServicesAvailabilityErrorDialog(GeoActivity.this);
+        }
+    }
+
+    @Override
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();
@@ -105,7 +121,9 @@ public abstract class GeoActivity extends FragmentActivity implements
     @Override
     protected void onPause() {
         super.onPause();
-        stopLocationUpdates();
+        if (mGoogleApiClient.isConnected()) {
+            stopLocationUpdates();
+        }
     }
 
     @Override
@@ -245,6 +263,7 @@ public abstract class GeoActivity extends FragmentActivity implements
     protected void startLocationUpdates() {
         LocationServices.FusedLocationApi
                 .requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+        onLocationUpdates();
     }
 
     /**
@@ -265,4 +284,9 @@ public abstract class GeoActivity extends FragmentActivity implements
                 connectionResult.getErrorMessage(),
                 connectionResult.getErrorCode()));
     }
+
+    /**
+     * Do something while location update is running.
+     */
+    protected abstract void onLocationUpdates();
 }

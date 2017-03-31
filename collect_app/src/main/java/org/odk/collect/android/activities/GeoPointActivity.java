@@ -47,7 +47,6 @@ public class GeoPointActivity extends GeoActivity {
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        startLocationUpdates();
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mCurrentLocation != null) {
             returnLocation();
@@ -67,7 +66,7 @@ public class GeoPointActivity extends GeoActivity {
 
     @Override
     public void onLocationChanged(Location location) {
-        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        mCurrentLocation = location;
         if (mCurrentLocation != null) {
             returnLocation();
         }

@@ -24,16 +24,28 @@ import android.widget.ProgressBar;
 import com.google.android.gms.location.LocationServices;
 
 import org.odk.collect.android.R;
+import org.odk.collect.android.widgets.GeoPointWidget;
 
 public class GeoPointActivity extends GeoActivity {
 
     private ProgressBar progressBar;
+
+    private double mLocationAccuracy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setTitle(getString(R.string.get_location));
+
+        Intent intent = getIntent();
+        mLocationAccuracy = GeoPointWidget.DEFAULT_LOCATION_ACCURACY;
+        if (intent != null && intent.getExtras() != null) {
+            if (intent.hasExtra(GeoPointWidget.ACCURACY_THRESHOLD)) {
+                mLocationAccuracy = intent.getDoubleExtra(GeoPointWidget.ACCURACY_THRESHOLD,
+                        GeoPointWidget.DEFAULT_LOCATION_ACCURACY);
+            }
+        }
 
         setContentView(R.layout.activity_geopoint);
         progressBar = (ProgressBar) findViewById(R.id.loading_location);
@@ -42,7 +54,9 @@ public class GeoPointActivity extends GeoActivity {
     @Override
     public void onConnected(Bundle connectionHint) {
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mCurrentLocation != null) {
+        if (mCurrentLocation != null
+                && mCurrentLocation.hasAccuracy()
+                && mCurrentLocation.getAccuracy() < mLocationAccuracy) {
             returnLocation();
         }
     }
@@ -66,7 +80,9 @@ public class GeoPointActivity extends GeoActivity {
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        if (mCurrentLocation != null) {
+        if (mCurrentLocation != null
+                && mCurrentLocation.hasAccuracy()
+                && mCurrentLocation.getAccuracy() < mLocationAccuracy) {
             returnLocation();
         }
     }

@@ -264,7 +264,7 @@ public abstract class GeoActivity extends FragmentActivity implements
     protected void startLocationUpdates() {
         LocationServices.FusedLocationApi
                 .requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        onLocationUpdates();
+        onLocationUpdatesStarted();
     }
 
     /**
@@ -289,5 +289,5 @@ public abstract class GeoActivity extends FragmentActivity implements
     /**
      * Do something while location update is running.
      */
-    protected abstract void onLocationUpdates();
+    protected abstract void onLocationUpdatesStarted();
 }

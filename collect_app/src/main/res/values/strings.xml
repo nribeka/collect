@@ -496,4 +496,8 @@
 <string name="sort_the_list">Sort the list</string>
 <string name="request_permissions_google_account">ODK Collect needs access to your Google account to get blank forms and submit filled forms.</string>
 <string name="filter_the_list">Filter the list</string>
+<string name="take_location">Use Current Location</string>
+<string name="loading_location_desc">Attempting to get higher accuracy.</string>
+<string name="loading_location_hint">This could take a few minutes.</string>
+<string name="loading_location_accuracy">Current accuracy: %1$sm, target accuracy: %2$sm.</string>
 </resources>
